@@ -95,6 +95,8 @@ int main(int argc , char *argv[]) {
     struct sockaddr_in server , client;
     char client_message[0xFFFF];
 
+    DEBUG_PRINT("Starting tls-helloworld\n");
+
 #ifdef _WIN32
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -117,7 +119,7 @@ int main(int argc , char *argv[]) {
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(port);
-     
+
     int enable = 1;
     setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
@@ -125,17 +127,17 @@ int main(int argc , char *argv[]) {
         perror("bind failed. Error");
         return 1;
     }
-     
+
     listen(socket_desc , 3);
-     
+
     c = sizeof(struct sockaddr_in);
 
     unsigned int size;
 
     struct TLSContext *server_context = tls_create_context(1, TLS_V12);
     // load keys
-    load_keys(server_context, "testcert/fullchain.pem", "testcert/privkey.pem");
-    
+    load_keys(server_context, "cert/cert-2048.pem", "cert/pk-rsa-2048.pem");
+
     char source_buf[0xFFFF];
     int source_size = read_from_file("tlshelloworld.c", source_buf, 0xFFFF);
     while (1) {
