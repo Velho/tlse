@@ -136,7 +136,7 @@ int main(int argc , char *argv[]) {
 
     struct TLSContext *server_context = tls_create_context(1, TLS_V12);
     // load keys
-    load_keys(server_context, "cert/cert-2048.pem", "cert/pk-rsa-2048.pem");
+    load_keys(server_context, "certs/cert-2048.pem", "certs/pk-rsa-2048.pem");
 
     char source_buf[0xFFFF];
     int source_size = read_from_file("tlshelloworld.c", source_buf, 0xFFFF);
