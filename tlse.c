@@ -10374,7 +10374,14 @@ int _private_tls_safe_read(struct TLSContext *context, void *buffer, int buf_siz
         return read_cb(ssl_data->fd, (char *)buffer, buf_size, 0);
 
     DEBUG_PRINT("Returning from tls_safe_read, callback %d\n", !read_cb);
-    return recv(ssl_data->fd, (char *)buffer, buf_size, 0);
+    int received = recv(ssl_data->fd, (char *)buffer, buf_size, 0);
+
+    if (errno == EWOULDBLOCK)
+    {
+        DEBUG_PRINT("_private_tls_safe_read: received = %d ; EWOULDBLOCK\n", received);
+    }
+
+    return received;
 }
 
 int SSL_accept(struct TLSContext *context) {

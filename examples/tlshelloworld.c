@@ -8,6 +8,7 @@
 #else
     #include <sys/socket.h>
     #include <arpa/inet.h>
+    #include <fcntl.h>
 #endif
 
 static char identity_str[0xFF] = {0};
@@ -148,7 +149,22 @@ int main(int argc , char *argv[]) {
             perror("accept failed");
             return 1;
         }
+
+        fcntl(client_sock, F_SETFL,
+            fcntl(client_sock, F_GETFL, 0)
+                | O_NONBLOCK);
+
         struct TLSContext *context = tls_accept(server_context);
+        int flags = fcntl(client_sock, F_GETFL);
+
+        if (flags & O_NONBLOCK)
+        {
+            printf("O_NONBLOCK is set.\n");
+        }
+        else
+        {
+            printf("O_NONBLOCK is not set.\n");
+        }
 
         // uncomment next line to request client certificate
         tls_request_client_certificate(context);
